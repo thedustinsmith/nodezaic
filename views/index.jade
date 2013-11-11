@@ -1,0 +1,77 @@
+extends layout
+block content
+	div.row
+		div.col-lg-12
+			div#nodesaic-wrapper
+				img#main-image(src="/images/nodegloves.jpg", border="0", height="500")
+				div#camera-holder
+				div.action-overlay#ao-initial
+					a.btn.btn-primary.btn-lg#upload-image-wrap(href='#') 
+						i.fa.fa-cloud-upload &nbsp; Upload Image
+						input#upload-image(type="file")
+					a.btn.btn-primary.btn-lg#use-camera(href='#') 
+						i.fa.fa-camera-retro.fa &nbsp; Use Camera
+				div.action-overlay#ao-video
+					a.btn.btn-primary.btn-lg#back-to-initial(href='#') Back
+					a.btn.btn-primary.btn-lg#take-picture(href='#')
+						i.fa.fa-camera-retro.fa &nbsp; Capture
+				div.action-overlay#ao-picture
+					a.btn.btn-primary.btn-lg#picture-again(href='#') Try Again
+					a.btn.btn-primary.btn-lg(href='/Mosaics') View Others
+					a.btn.btn-primary.btn-lg(href='/Mosaics/mine') View Mine
+				div.instagram
+				div.facebook
+				div.loading-wrap
+					img.loading(src="/images/ajax-loader.gif")
+	div.row
+		div.col-lg-12
+			div.jumbotron
+				h1 Chalupa Batman
+				br
+				p Presents you with NodeZaic a simple yet ridiculously awesome mosaic app of awesomeness.
+				p Give it a shot and see just what she can do for you.
+				br
+				p
+					a.btn.btn-primary.btn-lg(href='about') How'd They Do It?
+	div#instagram-modal.modal.fade
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+					h4.modal-title Instagram Photos
+				div.modal-body
+					ul.modal-listing
+					div(style='clear: both;')
+					img.loading(src="/images/ajax-loader.gif")
+				div.modal-footer
+					a.load-more.btn.btn-primary(href="#") load more
+	div#facebook-modal.modal.fade
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+					h4.modal-title Facebook Photos
+				div.modal-body
+					ul.modal-listing
+					div(style='clear: both;')
+					img.loading(src="/images/ajax-loader.gif")
+				div.modal-footer
+					a.load-more.btn.btn-primary(href="#") load more
+
+	div#old-browser.modal.fade
+		div.modal-dialog
+			div.modal-content
+				div.modal-header
+					button(type="button", class="close", data-dismiss="modal", aria-hidden="true") &times;
+					h4.modal-title Sorry about this...
+				div.modal-body
+					p This is kind of embarassing, but Nodezaic works best in Chrome or Firefox.  It looks like you're not using one of those.  You can try to use the app, but if it doesn't work you should <a href='http://browsehappy.com/'>Check this out</a>
+
+block scripts
+	script(src="/js/filereader.min.js")
+	script(src="/js/mosaic.js")
+	script(src="/js/camera.js")
+	script(src="/js/bootstrap.min.js")
+	script(src="/js/social.js")
+	script(src="/js/browser-detection.js")
+	script(src="/js/main.js")

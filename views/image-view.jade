@@ -1,0 +1,16 @@
+extends layout
+block content
+	div.col-lg-offset-2.col-lg-8.mosaic-view
+		img(src="#{path}")
+		br
+		span.views Views: #{views}
+		a.twitter-hashtag-button(href="https://twitter.com/intent/tweet?button_hashtag=NodeZaic&url=http://chalupa-batman.2013.nodeknockout.com/mosaics/#{id}&text=Check%20out%20my%20Mosaic%20I%20created%20using%20NodeZaic!", data-lang="en") Twitter #NodeZaic
+		div.fb-share-button(data-href="http://chalupa-batman.2013.nodeknockout.com/mosaics/#{id}", data-width="115", data-type="button_count")
+		div.actions
+			a.btn.btn-primary.btn-lg(href='#{path}') Download
+			a.btn.btn-primary.btn-lg(href='/mosaics/random') Random
+block scripts
+	script
+		!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
+	script
+		(function(d, s, id){var js, fjs = d.getElementsByTagName(s)[0];if (d.getElementById(id)) return;js = d.createElement(s); js.id = id;js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=439554552823154";fjs.parentNode.insertBefore(js, fjs);}(document,'script','facebook-jssdk'));

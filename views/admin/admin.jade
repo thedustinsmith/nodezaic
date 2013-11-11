@@ -1,0 +1,28 @@
+extend ../layout
+
+block head
+
+block content
+	div.col-lg-6
+		if location === 'sub'
+			div
+				a(href='/adminMosaic') Mosaic Images
+			ul.mosaic-listing-compact
+				each mosaic in results
+					li
+						img(src='', data-src='#{mosaic.path}', height="45")
+						span.caption #{mosaic.name}
+						a.remove(href='/adminRemove/#{mosaic.name}') Remove
+		else
+			div
+				a(href='/admin') Sub Images
+			ul.mosaic-listing-compact
+				each mosaic in results
+					li
+						img(src='', data-src='#{mosaic.path}', height="45")
+						span.caption #{mosaic.name}
+						a.remove(href='/adminRemove/#{mosaic.name}') Remove
+
+block scripts
+	script(src='/js/jquery.unveil.js')
+	script(src='/js/admin.js')

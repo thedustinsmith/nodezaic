@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+	div.container
+		form(method="POST", action="/admin/login")
+			div.control-group
+				label Username
+				input(type='text', name='username')
+			div.control-group
+				label Password
+				input(type='password', name='password')
+			div.control-group
+				input(type='submit', value='login')

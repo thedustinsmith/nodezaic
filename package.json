@@ -1,0 +1,31 @@
+{
+  "name": "nko4-chalupa-batman",
+  "version": "0.0.0",
+  "description": "Chalupa Batman",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:nko4/chalupa-batman.git"
+  },
+  "dependencies": {
+    "express": "~3.3.4",
+    "jade": "~0.34.0",
+    "nko": "*",
+    "mongoose": "~3.8.0",
+    "tmp": "*"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-develop": "~0.2.2",
+    "grunt-contrib-watch": "~0.5.3",
+    "request": "~2.27.0",
+    "time-grunt": "~0.1.1",
+    "load-grunt-tasks": "~0.2.0"
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
+}

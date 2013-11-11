@@ -1,0 +1,41 @@
+extends layout
+block content
+	div.row
+		div.col-lg-6
+
+			h2 What is NodeZaic?
+			p NodeZaic is a crowd sourced mosaic generator.  Every picture you upload contributes to the next person's mosaic!  It was written for Node Knockout 2013!
+
+			h2 What technologies does it use?
+			p NodeZaic was written using the following technologies:
+			ul
+				li
+					a(href='http://www.w3.org/html/wg/drafts/html/master/', target='_blank') Html5
+				li
+					a(href='http://www.nodejs.org', target='_blank') NodeJS
+				li 
+					a(href='http://expressjs.com/', target='_blank') ExpressJS
+				li
+					a(href='http://www.mongodb.org/', target='_blank') MongoDB
+					span &nbsp;with&nbsp;
+					a(href='http://mongoosejs.com/', target='_blank') Mongoose
+				li
+					a(href='http://www.jquery.com', target='_blank') jQuery
+				li
+					a(href='http://getbootstrap.com/', target='_blank') Bootstrap
+				li
+					a(href='http://fontawesome.io/', target='_blank') Font Awesome
+				li 
+					span With help from these plugins:
+						ul
+							li
+								a(href='http://bgrins.github.io/filereader.js/', target='_blank') FileReaderJS
+							li
+								a(href='http://luis-almeida.github.io/unveil/', target='_blank') jQuery Unveil
+
+		div.col-lg-6
+			div#team-about-mosaics
+				img(src='/images/team/tm-dustin.png')
+				img(src='/images/team/ethan-mosaic.png')
+				img(src='/images/team/andre-mosaic.png')
+				img(src='/images/team/andrew-mosaic.png')

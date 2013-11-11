@@ -1,0 +1,179 @@
+#page {
+	position: relative;
+	margin-top: 20px;
+}
+div.action-overlay{
+	position: absolute;
+	bottom: 0;
+	padding: 10px;
+}
+div.action-overlay a {
+  margin-right:17px;
+}
+
+#nodesaic-wrapper {
+	background-color: #111;
+	text-align: center;
+	position: relative;
+}
+#nodesaic-wrapper.showing-video #main-image,
+#nodesaic-wrapper video {
+	display: none;
+}
+
+#nodesaic-wrapper.showing-video video {
+	display: block;
+	margin: 0 auto;
+}
+#nodesaic-wrapper .loading-wrap {
+	display: none;
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	padding-top: 250px;
+	background-color: rgba(0, 0, 0, 0.8);
+}
+#nodesaic-wrapper.loading .loading-wrap {
+	display: block;
+}
+#upload-image-wrap {
+	position: relative;
+	overflow: hidden;
+}
+#upload-image-wrap input[type='file'] {
+	opacity: 0;
+	position: absolute;
+	top: 0;left: 0; right: 0; bottom: 0;
+	text-indent: -9999px;
+}
+#ao-video,
+#ao-picture,
+.showing-video #ao-initial,
+.showing-mosaic #ao-initial {
+	display: none;
+}
+.showing-video #ao-video {
+	display: block;
+}
+.showing-mosaic #ao-picture {
+	display: block;
+}
+a.listing-change {
+	position: absolute;
+	right: 15px;
+	top: 25px;
+}
+.mosaic-listing,
+.mosaic-listing-compact {
+	list-style-type: none;
+	padding-left:0px;
+}
+.mosaic-listing li {
+	float: left;
+	width:  200px;
+	height: 200px;
+	margin: 10px 35px 10px 0px;
+	text-align: center;
+}
+.mosaic-listing li:nth-child(5n){margin-right:0px;}
+.mosaic-listing li.well{padding:12px;}
+.mosaic-listing li img {
+	display: inline-block;
+	max-height: 165px;
+	max-width: 175px;
+}
+.mosaic-listing a {
+	color: rgb(119, 119, 119);
+}
+.mosaic-listing a:hover {
+	text-decoration: none;
+}
+.mosaic-listing-compact li {
+	height: 50px;
+	margin-bottom: 5px;
+	border: 1px solid #ccc;
+}
+.mosaic-listing-compact .caption {
+	display: inline-block;
+}
+.team-row img {
+	border-radius: 50%;
+}
+
+.instagram, .facebook {
+	background-image: url(/images/instagram.png);
+	background-repeat: no-repeat;
+	background-size: 50px;
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	bottom: 5px;
+	right: 5px;
+	cursor: pointer;
+}
+
+.facebook {
+	background-image: url(/images/facebook.png);
+	background-size: 45px;
+	bottom: 3px;
+	right: 60px;
+}
+
+.modal-dialog .modal-body {
+	text-align: center;
+}
+
+.modal-dialog .modal-footer {
+	text-align: center;
+}
+
+.modal-dialog .loading {
+	display: none;
+	margin-bottom: -25px;
+}
+
+.modal-listing li {
+	float: left;
+	list-style: none;
+	padding: 5px;
+	cursor: pointer;
+}
+#team-about-mosaics {
+	margin-top: 50px;
+}
+#team-about-mosaics img {
+	width: 252px;
+}
+.mosaic-view {
+	padding-top: 20px;
+	text-align: center;
+}
+.mosaic-view img {
+	max-width: 720px;
+}
+.mosaic-view img,
+.mosaic-view .actions a {
+	display: inline-block;
+}
+.mosaic-view .actions a {
+	margin: 10px 10px;
+}
+.mosaic-view .views {
+	position:absolute;
+	left: 20px;
+	margin-top: 10px;
+}
+.mosaic-view iframe#twitter-widget-0 {
+	margin-top: 10px;
+	position: absolute;
+	right: 20px;
+}
+
+.mosaic-view .fb-share-button {
+	position: absolute;
+	right: 20px;
+	margin-top: 35px;
+}
+footer{border-top: 1px solid #eeeeee;padding-top:9.5px;display:block;}

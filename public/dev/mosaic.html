@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>Here</title>
+<style>
+.block {
+	width: 800px;
+	border: 1px solid #888;
+	margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+	<div class="block">
+		<h3>Upload Main Image</h3>
+		<input type="file" id="main-file" />
+
+		<img id="main-file-preview" width="300" />
+	</div>
+	or
+	<div class="block">
+		<h3>Take a picture</h3>
+		<div id="camera"></div>
+		<button id="take-picture">Take it!!!!</button>
+	</div>
+	<div class="block">
+		<h3>Sub Images</h3>
+		<input type="file" id="sub-files" multiple />
+	</div>
+
+	<button id="dostuff">Do Stuff</button>
+
+	<div class="block">
+		<h3>Output</h3>
+		<img id="output" />
+	</div>
+
+	<div class="block">
+		<h3>Save it</h3>
+		<input type="text" id="image-name" />
+		<button id="image-submit">Save it</button>
+	</div>
+
+
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script type="text/javascript" src="../js/mosaic.js"></script>
+<script type="text/javascript" src="../js/camera.js"></script>
+<script type="text/javascript">
+$(function() {
+	var mosaic = new MosaicJS();
+	var subImages = [];
+	var currentMainImage;
+
+	var mainImage = $("#main-file-preview")[0];
+	var camera = new Camera($('#camera'));
+	window.camera = camera;
+
+	$("#take-picture").on('click', function(ev) {
+		ev.preventDefault();
+		var url = camera.takePicture();
+		mainImage.src = url;
+		loadMainImage(url);
+		//camera.takePicture(function(url) {
+		//	console.log(url);
+		//	loadMainImage(url);
+		//});
+	});
+
+	var mainFile = $("#main-file"),
+		subFiles = $("#sub-files");
+
+	$("#main-file").on('change', function(e) {
+		var file = this.files[0];
+		var reader = new FileReader();
+		reader.onload = function(e) {
+			var src = e.target.result;
+			mainImage.src = src;
+		 	loadMainImage(src);
+	 	};
+		reader.readAsDataURL(file);
+	});
+
+	$("#sub-files").on('change', function(e) {
+		var files = this.files;
+		subImages = [];
+		for(var f in files) {
+			var file = files[f];
+			var reader = new FileReader();
+			reader.onload = function(e) { 
+				var i = new Image();
+				i.src = e.target.result;
+				subImages.push(i);
+			}
+			reader.readAsDataURL(file);
+		}
+	});
+
+	function createMosaic() {
+		var img = currentMainImage;
+		mosaic.setMainImage(img);
+		mosaic.setSubImages(subImages);
+		var dataurl = mosaic.createMosaic();
+		$("#output").attr("src", dataurl);
+	};
+
+	function loadMainImage(url) {
+		var maxw = 800;
+		var img = currentMainImage = new Image();
+		img.onload = function() {
+			var scale = maxw / img.width;
+			if (scale < 1) {
+				img.width = maxw;
+				img.height = img.height * scale;
+			}
+			createMosaic(img);
+		};
+		img.src = url;
+	}
+
+	$("#dostuff").on('click', function(ev) {
+		loadMainImage($("#main-file-preview").attr("src"));
+	});
+
+	var nameEl = $("#image-name");
+	$("#image-submit").on('click', function() {
+		var name = nameEl.val();
+		$.post('/mosaics', {
+			imgData: $("#output").attr('src')
+		},
+		function(resp) {
+			console.log(resp);
+		})
+	});
+});
+</script>
+</body>
+</html>

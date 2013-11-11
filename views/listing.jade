@@ -1,0 +1,33 @@
+extend layout
+
+block head
+
+block content
+	h1= title
+
+	if isAll
+		a.btn.btn-primary.btn-large.listing-change(href='/mosaics/mine') View Mine
+	else
+		a.btn.btn-primary.btn-large.listing-change(href='/mosaics') View All
+	
+	if isAll
+		div.alert.alert-warning
+			h4 Warning
+			p View user generated content with caution you never know what you might see ...
+	ul.thumbs.mosaic-listing
+		if !error
+			each mosaic in results
+				li.well
+					a.thumb(href='/mosaics/#{mosaic._id}')
+						img(src='/images/nodegloves.jpg', data-src="#{mosaic.path}", width="175")
+						span.mosaic-views Views: #{mosaic.views}
+						//-div.caption
+							//div.image-title title
+							//div.image-desc desciprtion
+		else
+			p You haven't created any.
+			
+
+block scripts
+	script(src='/js/jquery.unveil.js')
+	script(src='/js/listing.js')

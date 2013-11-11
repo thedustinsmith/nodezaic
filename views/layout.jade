@@ -1,0 +1,48 @@
+doctype 5
+html
+	head
+		title NodeZaic
+		link(rel='stylesheet', href='/css/style.css')
+		link(rel='stylesheet', href='/css/bootswatch.min.css')
+		link(rel='stylesheet', href='/css/custom.css')
+		link(rel='stylesheet', href='/css/fontawesome/css/font-awesome.min.css')
+		link(rel='icon', type='image/ico', href='/images/nz.ico')
+	body
+		div.navbar.navbar-default.navbar-fixed-top
+			div.container 
+				div.navbar-header
+					a.navbar-brand(href='/')
+						img(src="/images/logo.png", border="0", width="200px")
+				div#navbar-main.navbar-collapse.collapse
+					ul.nav.navbar-nav(style='margin-top:10px')
+						li
+							a(href='/Mosaics') Examples
+						li
+							a(href='/Team') Team
+						li
+							a(href='/About') About
+					ul.nav.navbar-nav.navbar-right(style='margin-top:10px')
+						li.kolink
+							iframe(src="http://nodeknockout.com/iframe/chalupa-batman", frameborder="0", scrolling="no", allowtransparency="true", width="115", height="25")
+		div.container#page
+			block content
+		div.container
+			footer
+				div.row
+					div.col-lg-12
+						ul.list-unstyled
+							li.pull-right
+								a#to-top(href='#') Back to top
+							li 
+								a(href='/') NodeZaic
+							li
+								a(href='/Mosaics') Examples
+							li
+								a(href='/Team') Team
+							li 
+								a(href='/About') About
+
+		script(src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js")
+		script
+			$("#to-top").on('click', function(ev) { ev.preventDefault(); $(document.body).animate({ scrollTop: 0}); });
+		block scripts
