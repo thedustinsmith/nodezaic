@@ -3,7 +3,7 @@ var imageUtility = require("../utility/imageUtility"),
 	http = require('http');
 
 module.exports = function(app) {
-	app.post('/imagestore', function(req, res) {
+	app.post('/imagestore', function (req, res) {
 		var imgData = req.body.imgData,
 			name = req.body.name,
 			fileType = req.body.fileType;
@@ -21,7 +21,7 @@ module.exports = function(app) {
 		});
 	});
 
-	app.get('/imagestore/:count', function (req, res) {
+	app.get('/imagestore/:count?', function (req, res) {
 		var count = req.param('count');
 		if (!count) {
 			count = 25;

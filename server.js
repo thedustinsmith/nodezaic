@@ -1,16 +1,12 @@
-// https://github.com/nko4/website/blob/master/module/README.md#nodejs-knockout-deploy-check-ins
-require('nko')('SrhQM74r99G256SQ');
-
 var express = require('express'),
     mongoose = require('./mongoose'),
     http = require('http'),
     path = require('path');
 
 var isProduction = (process.env.NODE_ENV === 'production'),
-    port = (isProduction ? 80 : 8000);
+    port = (isProduction ? 5678 : 8000);
 
 var app = express();
-require('./routes')(app);
 
 app.configure(function(){
   app.set('port', port);
@@ -27,8 +23,8 @@ app.configure(function(){
   app.use(express.static(path.join(__dirname, 'public')));
 });
 
-var dustin = require('./routes/dustin');
-app.get('/dustin', dustin.index);
+
+require('./routes')(app);
 
 http.createServer(app).listen(app.get('port'), function(){
   // if run as root, downgrade to the owner of this file

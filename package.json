@@ -15,7 +15,8 @@
     "jade": "~0.34.0",
     "nko": "*",
     "mongoose": "~3.8.0",
-    "tmp": "*"
+    "tmp": "*",
+    "bcrypt": "*"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
