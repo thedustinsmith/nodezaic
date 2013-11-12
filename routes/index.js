@@ -1,8 +1,22 @@
+module.exports = function(app){
+	app.get('/', function(req, res) {
+		res.render('index')
+	});
 
-/*
- * GET home page.
- */
+	app.get('/about', function(req, res) {
+		res.render('about', { title: 'Team - Chalupa Batman' });
+	});
 
-exports.index = function(req, res){
-  res.render('index', { title: 'Express' });
+	app.get('/team', function(req, res){
+		res.render('team');
+	});
+
+	app.get('/examples', function(req, res){
+		res.render('examples', { title: 'Mosaic Examples' });
+	})
+
+	require('./admin')(app);
+	require('./mosaic')(app);
+	require('./imagestore')(app);
+	require('./utility')(app);
 };

@@ -1,7 +1,4 @@
-var fs = require("fs"),
-	tmp = require("tmp"),
-	mongoose = require('mongoose'),
-	db = require('../models/database').DataBase,
+var db = require('../models'),
 	imageUtility = require("../utility/imageUtility");
 
 var validateLogin = function(req, res, cb) {
@@ -11,88 +8,90 @@ var validateLogin = function(req, res, cb) {
     });
 };
 
-exports.list = function (req, res) {
-    validateLogin(req, res, function(loggedin) {
-        if(!loggedin) {
-            res.redirect('/admin/login');
-            return;
-        }
-        var path = "/img_store/images/";
-        imageUtility.getListing('images', function (files) {
-            var results = [];
-            for (var i = 0; i < files.length; i++){
-                results.push({ 'path': files[i], 'name': files[i].replace(path, "")});
+module.exports = function (app) {
+    app.get('/admin/list', function(req, res) {
+        validateLogin(req, res, function(loggedin) {
+            if(!loggedin) {
+                res.redirect('/admin/login');
+                return;
             }
-            res.render('admin/admin', { results: results, location: 'sub' })
+            var path = "/img_store/images/";
+            imageUtility.getListing('images', function (files) {
+                var results = [];
+                for (var i = 0; i < files.length; i++){
+                    results.push({ 'path': files[i], 'name': files[i].replace(path, "")});
+                }
+                res.render('admin/admin', { results: results, location: 'sub' })
+            });
         });
     });
-};
 
-exports.remove = function (req, res) {
-    validateLogin(req, res, function(loggedin) {
-        if(!loggedin) {
-            res.redirect('/admin/login');
-            return;
-        }
-        var name = req.param('name');
-        var path = require("path").resolve(__dirname + "/../public/img_store/images/" + name);
-        fs.unlink(path, function (err) {
-            console.log("couldn't delete", path)
-        });
+    app.delete('/admin/:name', function (req, res) {
+        validateLogin(req, res, function(loggedin) {
+            if(!loggedin) {
+                res.redirect('/admin/login');
+                return;
+            }
+            var name = req.param('name');
+            var path = require("path").resolve(__dirname + "/../public/img_store/images/" + name);
+            fs.unlink(path, function (err) {
+                console.log("couldn't delete", path)
+            });
 
-        res.json({success: true});
-    });
-};
-
-exports.listMosaic = function (req, res) {
-    validateLogin(req, res, function(loggedin) {
-        if (!loggedin) {
-            res.redirect('/admin/login');
-            return;
-        }
-
-        db.mosaics.find().exec(function (err, results) {
-            if (err) throw err;
-            res.render('admin/admin', { results: results, location: 'mosaic' })
+            res.json({success: true});
         });
     });
-};
 
-exports.removeMosaic = function (req, res) {
-    validateLogin(req, res, function(loggedin) {
-        if(!loggedin) {
-            res.redirect('/admin/login');
-            return;
-        }
-        var id = req.param('id');
-        var name = db.mosaics.find({ _id: id }).name;
-        db.mosaics.findOneAndRemove({ _id: id }, function (err, obj) {
-            console.log('removing', obj);
-        });
+    app.get('/adminMosaic', function (req, res) {
+        validateLogin(req, res, function(loggedin) {
+            if (!loggedin) {
+                res.redirect('/admin/login');
+                return;
+            }
 
-        var path = require("path").resolve(__dirname + "/../public/img_store/images/" + name);
-        fs.unlink(path, function (err) {
-            console.log("couldn't delete", path)
+            db.mosaicModel.find().exec(function (err, results) {
+                if (err) throw err;
+                res.render('admin/admin', { results: results, location: 'mosaic' })
+            });
         });
-        res.json({success: true});
     });
-};
 
-exports.login = function(req, res) {
-    res.render('admin/login', {});
-};
+    app.delete('/adminMosaic/:id', function (req, res) {
+        validateLogin(req, res, function(loggedin) {
+            if(!loggedin) {
+                res.redirect('/admin/login');
+                return;
+            }
+            var id = req.param('id');
+            var name = db.mosaicModel.find({ _id: id }).name;
+            db.mosaicModel.findOneAndRemove({ _id: id }, function (err, obj) {
+                console.log('removing', obj);
+            });
 
-exports.loginPost = function(req, res) {
-    var username = req.body.username, 
-        password = req.body.password;
+            var path = require("path").resolve(__dirname + "/../public/img_store/images/" + name);
+            fs.unlink(path, function (err) {
+                console.log("couldn't delete", path)
+            });
+            res.json({success: true});
+        });
+    });
 
-    db.admins.authenticate(username, password, function(success) { 
-        if (success) {
-          res.cookie('admin_id', username);
-          res.redirect('/admin');
-        }
-        else {
-          res.redirect('/admin?failed=true');
-        }
+    app.get('/admin/login', function(req, res) {
+        res.render('admin/login', {});
+    });
+
+    app.post('/admin/login', function(req, res) {
+        var username = req.body.username, 
+            password = req.body.password;
+
+        db.adminModel.authenticate(username, password, function(success) { 
+            if (success) {
+              res.cookie('admin_id', username);
+              res.redirect('/admin');
+            }
+            else {
+              res.redirect('/admin?failed=true');
+            }
+        });
     });
 };
