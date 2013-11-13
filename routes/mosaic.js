@@ -24,6 +24,14 @@ module.exports = function (app) {
 	    });
 	});
 
+	app.get('/mosaics/random', function (req, res) {
+		db.mosaicModel.getRandom(function(mosaic) {
+			mosaic.views = mosaic.views + 1;
+			mosaic.save();
+			res.render('mosaics/view', mosaic);
+		});
+	});
+
 	app.get('/mosaics/:id', function(req, res) {
 		var mosaicID = req.param('id');
 		db.mosaicModel.getByID(mosaicID, function(err, mosaic) {
@@ -34,15 +42,7 @@ module.exports = function (app) {
 			res.render('mosaics/view', mosaic);
 		})
 	});
-
-	app.get('/mosaics/random', function (req, res) {
-		db.mosaicModel.getRandom(function(mosaic) {
-			mosaic.views = mosaic.views + 1;
-			mosaic.save();
-			res.render('mosaics/view', mosaic);
-		});
-	});
-
+	
 	app.post('/mosaics', function(req, res){
 		var imgData = req.body.imgData,
 			name = req.body.name,
