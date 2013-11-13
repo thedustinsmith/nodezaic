@@ -91,25 +91,31 @@
 	};
 
 
-	var MosaicJS = window.MosaicJS = function() { 
-		this.quality = 10;
+	var MosaicJS = window.MosaicJS = function(opts) { 
 		this.subImages = [];
 		this.mainImage = null;
 	};
 
-	MosaicJS.prototype.setQuality = function(q) {
-		this.quality = parseInt(q, 10);
-	};
-
 	MosaicJS.prototype.setMainImage = function(img) {
 		this.mainImage = new CanvasImage(img);
-		this.quality = parseInt(this.mainImage.width * .02, 10);
+		var ss = parseInt(this.mainImage.width * .01, 10);
+		this.setRatios(ss, 5);
+	};
+
+	MosaicJS.prototype.setRatios = function (ss, sr) {
+		this.sampleRatio = sr;
+		this.sampleSize = ss;
+		for(var i = 0; i < this.subImages.length; i++) {
+			var si = this.subimages[i];
+			si.setDimensions(ss*sr, ss*sr);
+		}
 	};
 
 	MosaicJS.prototype.setSubImages = function(imgs) {
+		var s = this.sampleRatio * this.sampleSize;
 		this.subImages = [];
 		for (var x = 0; x < imgs.length; x++) {
-			var i = new CanvasImage(imgs[x], this.quality, this.quality);
+			var i = new CanvasImage(imgs[x], s, s);
 			this.addSubImage(i);
 		}
 	};
@@ -141,31 +147,16 @@
 			pix[j + 2] = b + (bdelt / 1.5);
 		}
 
-		this.mainImage.update(sData, x, y);
+		return sData;
 	};
 
 	MosaicJS.prototype.fillChunk_Simple = function(rgb, x, y) {
-		var q = this.quality,
+		var q = this.sampleRatio * this.sampleSize,
 			color = 'rgb(' + rgb.join(',') + ')';
+
+
 		this.mainImage.context.fillStyle = color;
 		this.mainImage.context.fillRect(x, y, q, q);
-	};
-
-	MosaicJS.prototype.createMosaic_legacy = function(cb) {
-		var mi = this.mainImage,
-			w = mi.width,
-			h = mi.height,
-			q = this.quality,
-			fill = (this.subImages.length > 0 ? this.fillChunk_Advanced : this.fillChunk_Simple).bind(this);
-
-		for (var x = 0; x < w; x += q) {
-			for (var y = 0; y < h; y += q) {
-				var chunk = mi.getImageData(x, y, q, q);
-				var rgb = getAveRGB(chunk.data);
-				fill(rgb, x, y);
-			}
-		}
-		return mi.canvas.toDataURL();
 	};
 
 	function _getImageData(data, xPos, yPos, w, h) {
@@ -185,23 +176,64 @@
 		return ret;
 	}
 
+	MosaicJS.prototype.bufferOutput = function (outCtx, rgb, x, y) {
+		var ss = this.sampleRatio * this.sampleSize;
+		if (this.subImages.length) {
+			var advData = this.fillChunk_Advanced(rgb);
+			outCtx.putImageData(advData, x, y);
+		}
+		else {
+			var simpData = outCtx.createImageData(ss, ss);
+			for(var i = 0; i < simpData.data.length; i+=4) {
+				simpData.data[i] = r[0];
+				simpData.data[i+1] = r[1];
+				simpData.data[i+2] = r[2];
+				simpData.data[i+3] = 255;
+			}
+			outCtx.putImageData(simpData, x, y);
+		}
+	};
 
 	MosaicJS.prototype.createMosaic = function(cb) {
 		var mi = this.mainImage,
 			w = mi.width,
 			h = mi.height,
-			q = this.quality,
+			q = this.sampleSize,
+			sr = this.sampleRatio,
 			fill = (this.subImages.length > 0 ? this.fillChunk_Advanced : this.fillChunk_Simple).bind(this);
+
+		var output = document.createElement('canvas');
+		var outCtx = output.getContext('2d');
+		output.width = mi.width * sr;
+		output.height = mi.height * sr;
 
 		var data = mi.getImageData();
 		for (var x = 0; x < w; x += q) {
 			for (var y = 0; y < h; y += q) {
 				var chunk = _getImageData(data, x, y, q, q);
 				var rgb = getAveRGB(chunk);
+				this.bufferOutput(outCtx, rgb, x * sr, y * sr);
+			}
+		}
+
+		return output.toDataURL();
+	}
+
+	MosaicJS.prototype.createMosaic_legacy = function(cb) {
+		var mi = this.mainImage,
+			w = mi.width,
+			h = mi.height,
+			q = this.quality,
+			fill = (this.subImages.length > 0 ? this.fillChunk_Advanced : this.fillChunk_Simple).bind(this);
+
+		for (var x = 0; x < w; x += q) {
+			for (var y = 0; y < h; y += q) {
+				var chunk = mi.getImageData(x, y, q, q);
+				var rgb = getAveRGB(chunk.data);
 				fill(rgb, x, y);
 			}
 		}
 		return mi.canvas.toDataURL();
-	}
+	};
 
 })(window, document);
