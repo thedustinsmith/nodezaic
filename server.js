@@ -19,8 +19,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(express.compress());
   app.use(app.router);
-  app.use(express.staticCache());
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, 'public'), { maxAge: 31557600000 }));
 });
 
 
