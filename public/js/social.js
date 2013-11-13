@@ -124,7 +124,7 @@ Facebook = {
 	},
 	onScriptInit: function () {
 		FB.init({
-			appId: '439554552823154',
+			appId: '657825724237731',
 			status: false,
 			xfbml: false
 		});
