@@ -9,18 +9,18 @@ module.exports = function (app) {
 
 	        var all = results.sort(function() {return 0.5 - Math.random()});
 
-	        res.render('listing', { results: all, title: 'Generated Mosaics', isAll: true })
+	        res.render('mosaics/index', { results: all, title: 'Generated Mosaics', isAll: true })
 	    });
 	});
 
-	app.get('mosaics/mine', function (req, res) {
+	app.get('/mosaics/mine', function (req, res) {
 		if(!req.cookies.uid) {
-			res.render('listing', {error: true, title: 'My Mosaics'});
+			res.render('mosaics/index', {error: true, title: 'My Mosaics'});
 			return;
 		}
 	    db.mosaicModel.find({ userID: req.cookies.uid }).exec(function (err, results) {
 	        if (err) throw err;
-	        res.render('listing', { results: results, title: 'My Mosaics' })
+	        res.render('mosaics/index', { results: results, title: 'My Mosaics' })
 	    });
 	});
 
@@ -31,7 +31,7 @@ module.exports = function (app) {
 
 			mosaic.views = mosaic.views + 1;
 			mosaic.save();
-			res.render('image-view', mosaic);
+			res.render('mosaics/view', mosaic);
 		})
 	});
 
@@ -39,7 +39,7 @@ module.exports = function (app) {
 		db.mosaicModel.getRandom(function(mosaic) {
 			mosaic.views = mosaic.views + 1;
 			mosaic.save();
-			res.render('image-view', mosaic);
+			res.render('mosaics/view', mosaic);
 		});
 	});
 

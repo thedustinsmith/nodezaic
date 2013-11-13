@@ -4,16 +4,12 @@ module.exports = function(app){
 	});
 
 	app.get('/about', function(req, res) {
-		res.render('about', { title: 'Team - Chalupa Batman' });
+		res.render('about/index', { title: 'Team - Chalupa Batman' });
 	});
 
 	app.get('/team', function(req, res){
-		res.render('team');
+		res.render('team/index');
 	});
-
-	app.get('/examples', function(req, res){
-		res.render('examples', { title: 'Mosaic Examples' });
-	})
 
 	require('./admin')(app);
 	require('./mosaic')(app);
