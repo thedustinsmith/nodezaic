@@ -9,7 +9,7 @@ SocialNetworks = {
 }
 
 Instagram = {
-	authUrl: 'https://instagram.com/oauth/authorize/?client_id=8aba3e94c2c04c16822a980190d4c86d&redirect_uri=http://chalupa-batman.2013.nodeknockout.com/socialcallback&response_type=token',
+	authUrl: 'https://instagram.com/oauth/authorize/?client_id=c72ef88f0a7b47aa96d63bff6f08b934&redirect_uri=http://localhost:8000/socialcallback&response_type=token',
 	modal: $([]),
 	loadMoreLink: $([]),
 	nextUrl: '',
