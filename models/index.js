@@ -4,5 +4,5 @@ Admin = require('./admin');
 
 
 exports.mosaicModel = Mosaic.mosaicModel;
-exports.userModel = Mosaic.userModel;
-exports.adminModel = Mosaic.adminModel;
+exports.userModel = User.userModel;
+exports.adminModel = Admin.adminModel;
