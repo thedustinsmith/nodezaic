@@ -47,6 +47,21 @@ module.exports = function (grunt) {
           livereload: reloadPort
         }
       }
+    },
+    uglify: {
+      build: {
+        files: {
+            'public/js/home.min.js': ['public/js/home/*.js']
+        }
+      }
+    },
+    preprocess: {
+      inline: {
+        src: ['views/index.jade'],
+        options: {
+          inline: true
+        }
+      }
     }
   });
 
@@ -69,5 +84,7 @@ module.exports = function (grunt) {
     }, 500);
   });
 
-  grunt.registerTask('default', ['develop', 'watch']);
+  grunt.loadNpmTasks('grunt-contrib-uglify');
+
+  grunt.registerTask('default', ['uglify', 'develop', 'watch']);
 };

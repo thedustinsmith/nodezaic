@@ -68,13 +68,20 @@ block content
 					p This is kind of embarassing, but Nodezaic works best in Chrome or Firefox.  It looks like you're not using one of those.  You can try to use the app, but if it doesn't work you should <a href='http://browsehappy.com/'>Check this out</a>
 
 block scripts
-	script(src="/js/filereader.min.js")
-	script(src="/js/mosaic.js")
-	script(src="/js/camera.js")
-	script(src="/js/bootstrap.min.js")
-	script(src="/js/social.js")
-	script(src="/js/browser-detection.js")
-	script(src="/js/main.js")
+	<!-- @exclude -->
+	script(src="/js/home/filereader.min.js")
+	script(src="/js/home/mosaic.js")
+	script(src="/js/home/camera.js")
+	script(src="/js/home/bootstrap.min.js")
+	script(src="/js/home/social.js")
+	script(src="/js/home/browser-detection.js")
+	script(src="/js/home/main.js")
+	<!-- @endexclude -->
+
+<!-- @exclude -->
+//- <!-- @endexclude -->
+	script(src="/js/home.min.js")
+
 	script
 		app.FacebookID = "#{facebookID}";
 		app.InstagramID = "#{instagramID}";
