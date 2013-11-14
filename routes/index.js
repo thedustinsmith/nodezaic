@@ -1,6 +1,8 @@
+var config = require('../utility').currentConfiguration();
+
 module.exports = function(app){
 	app.get('/', function(req, res) {
-		res.render('index')
+		res.render('index', { facebookID: config.facebookAppID, instagramID: config.instagramClientID });
 	});
 
 	app.get('/about', function(req, res) {

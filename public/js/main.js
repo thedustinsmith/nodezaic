@@ -4,8 +4,7 @@ $(function() {
 		mainImage = $("#main-image"),
 		mosaic = new MosaicJS();
 
-Instagram.init();
-Facebook.init();
+SocialNetworks.init();
 
 var Nodesaic = window.Nodesaic = {
 	camera: null,
@@ -118,12 +117,11 @@ if(bestBrowsers.indexOf(BrowserDetect.browser) === -1) {
 	$("#old-browser").modal();
 }
 
-
 Nodesaic.init();
 });
 
 
-
+var app = {};
 
 
 

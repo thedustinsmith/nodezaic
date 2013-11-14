@@ -5,11 +5,14 @@ SocialNetworks = {
 	setImage: function(img) {
 		var src = $(img).attr('src');
 		Nodesaic.usePicture('/proxy-image/' + encodeURIComponent(src), 'image/jpeg');
+	},
+	init: function() {
+		SocialNetworks.Instagram.init();
+		SocialNetworks.Facebook.init();
 	}
 }
 
-Instagram = {
-	authUrl: 'https://instagram.com/oauth/authorize/?client_id=c72ef88f0a7b47aa96d63bff6f08b934&redirect_uri=http://localhost:8000/socialcallback&response_type=token',
+SocialNetworks.Instagram = {
 	modal: $([]),
 	loadMoreLink: $([]),
 	nextUrl: '',
@@ -20,6 +23,7 @@ Instagram = {
 			that.showImages();
 		});
 
+		
 		this.modal = $('#instagram-modal');
 		this.loadMoreLink = this.modal.find('.load-more');
 
@@ -33,7 +37,9 @@ Instagram = {
 			return;
 		}
 
-		var that = this;
+		var that = this,
+			callbackUrl = window.location.origin + '/socialcallback';
+			authUrl = 'https://instagram.com/oauth/authorize/?client_id=' + app.InstagramID + '&redirect_uri=' + callbackUrl + '&response_type=token';
 
 		window.authCallback = function(token){
 			SocialNetworks.toggleLoading(that.modal);
@@ -50,7 +56,7 @@ Instagram = {
 			});
 		}
 
-		window.open(this.authUrl, "Instagram", "width=600, height=400");
+		window.open(authUrl, "Instagram", "width=600, height=400");
 	},
 	appendImages: function(images) {
 		var list = this.modal.find('.modal-listing'),
@@ -85,7 +91,7 @@ Instagram = {
 	}
 }
 
-Facebook = {
+SocialNetworks.Facebook = {
 	isAuthenticated: false,
 	accessToken: '',
 	nextPage: '',
@@ -124,7 +130,7 @@ Facebook = {
 	},
 	onScriptInit: function () {
 		FB.init({
-			appId: '657825724237731',
+			appId: app.FacebookID,
 			status: false,
 			xfbml: false
 		});
@@ -159,9 +165,9 @@ Facebook = {
 		});
 	},
 	appendImages: function(resp) {
-		Facebook.nextPage = resp.paging ? resp.paging.next : '';
+		SocialNetworks.Facebook.nextPage = resp.paging ? resp.paging.next : '';
 
-		var list = Facebook.modal.find('ul');
+		var list = SocialNetworks.Facebook.modal.find('ul');
 		$(resp.data).each(function() {
 			var url = this.source.replace('https', 'http'),
 				img = document.createElement("img"); 
@@ -170,6 +176,6 @@ Facebook = {
 			img.width = 100;
 			list.append($("<li></li>").html(img));
 		});
-		SocialNetworks.toggleLoading(Facebook.modal);
+		SocialNetworks.toggleLoading(SocialNetworks.Facebook.modal);
 	}
 }

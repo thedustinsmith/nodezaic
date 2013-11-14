@@ -1,0 +1,14 @@
+{
+	"development": {
+		"facebookAppID": "657825724237731",
+		"facebookAppSecret": "275f314b831391f05068863869ed79d6",
+		"instagramClientID": "c72ef88f0a7b47aa96d63bff6f08b934",
+		"instagramClientSecret": "8c7cbf529ca2423384e8ae286542a13e"
+	},
+	"production": {
+		"facebookAppID": "436748499762562",
+		"facebookAppSecret": "873872e2abb29cd0126e72b9bf50b1da",
+		"instagramClientID": "942dbbd264154ef080ee03e9443feff8",
+		"instagramClientSecret": "2f30e65f103d44a88d5712e92b1ac5bb"
+	}
+}
