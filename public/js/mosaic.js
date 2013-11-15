@@ -124,6 +124,93 @@
 		this.subImages.push(img);
 	};
 
+/*******
+MANUAL CANVAS MANIPULATION 
+********
+function _getImageData(data, xPos, yPos, w, h) {
+	var ret = [],
+		dWidth = data.width,
+		dHeight = data.height,
+		imgdata = data.data,
+		rowWidth = dWidth * 4;
+
+	for (var row = yPos; row < (yPos + h); row++) {
+		var start = (xPos * 4) + (row * rowWidth);
+		var end = ((xPos + w) * 4) + (row * rowWidth) + 4;
+		for(var i = start; i < end; i++) {
+			ret.push(imgdata[i]);
+		}
+	}
+	return ret;
+}
+MosaicJS.prototype._putImageData = function (inData, xPos, yPos) {
+	var inW = inData.width,
+		inH = inData.height,
+		rowWidth = this.output.width * 4;
+
+	var inIx = 0;
+	for (var row = yPos; row < (yPos + inH); row++) {
+		var rowStart = row * rowWidth;
+		var colStart = (xPos * 4) + rowStart;
+		var colEnd = colStart + (inW * 4);
+
+		for (var ix = colStart; ix < colEnd; ix++) {
+			this.output.data[ix] = inData.data[inIx];
+			inIx++;
+		}
+	}
+}
+
+MosaicJS.prototype.bufferOutput = function (rgb, x, y) {
+	var ss = this.sampleRatio * this.sampleSize;
+	if (this.subImages.length) {
+		var advData = this.fillChunk_Advanced(rgb);
+		this._putImageData(advData, x, y);
+	}
+	else {
+		throw 'simp data error';
+		var simpData = outCtx.createImageData(ss, ss);
+		for(var i = 0; i < simpData.data.length; i+=4) {
+			simpData.data[i] = r[0];
+			simpData.data[i+1] = r[1];
+			simpData.data[i+2] = r[2];
+			simpData.data[i+3] = 255;
+		}
+		_putImageData(output, simpData, x, y);
+	}
+};
+
+MosaicJS.prototype.fillChunk_Advanced = function (rgb) {
+	var or = rgb[0],
+		og = rgb[1],
+		ob = rgb[2],
+		imgIx = getRandomNum(0, this.subImages.length),
+		subImg = this.subImages[imgIx].getImageData(); // why didn't this work?
+
+		
+	var pix = subImg.data;
+	for(var j = 0; j<pix.length; j += 4){ 
+		var r = pix[j],
+			g = pix[j+1],
+			b = pix[j+2];
+
+		var rdelt = or - r,
+			gdelt = og - g,
+			bdelt = ob - b;
+
+		pix[j] = r + (rdelt / 1.5);
+		pix[j + 1] = g + (gdelt / 1.5);
+		pix[j + 2] = b + (bdelt / 1.5);
+	}
+
+	return subImg;
+};
+/*******
+END MANUAL CANVAS MANIPULATION 
+********/
+
+// before manual conversion
+/*
 	MosaicJS.prototype.fillChunk_Advanced = function(rgb, x, y) {
 		var or = rgb[0],
 			og = rgb[1],
@@ -217,7 +304,57 @@
 		}
 
 		return output.toDataURL();
-	}
+	}; */
+	MosaicJS.prototype.createMosaic = function(cb) {
+		var mi = this.mainImage,
+			w = mi.width,
+			h = mi.height,
+			q = this.sampleSize,
+			sr = this.sampleRatio;
+
+		var output = document.createElement('canvas');
+		output.width = mi.width * sr;
+		output.height = mi.height * sr;
+		var outCtx = output.getContext('2d');
+
+
+		var outputData = outCtx.createImageData(output.width, output.height);
+		var inputData = mi.getImageData();
+		var subImageData = this.subImages.map(function(si) { return si.getImageData(); });
+		this.subImageData = subImageData;
+		this.output = outputData;
+		this.outCtx = outCtx;
+		
+/*
+		for (var x = 0; x < w; x += q) {
+			for (var y = 0; y < h; y += q) {
+				var chunk = _getImageData(inputData, x, y, q, q);
+				var rgb = getAveRGB(chunk);
+				this.bufferOutput(rgb, x * sr, y * sr);
+			}
+		}
+		
+		this.outCtx.putImageData(this.output, 0, 0);
+		//outCtx.putImageData(this.output, 0, 0);
+		cb(output.toDataURL());
+		
+*/
+		var worker = new Worker('/js/mosaicworker.js');
+		worker.postMessage({
+			output: outputData,
+			input: inputData,
+			subImageData: subImageData,
+			sampleRatio: sr,
+			sampleSize: q
+		});
+
+		worker.addEventListener('message', function(e) {
+			var result = e.data.result;
+			log(e, output.width, output.height);
+			outCtx.putImageData(result, 0, 0);
+			cb(output.toDataURL());
+		});
+	};
 
 	MosaicJS.prototype.createMosaic_legacy = function(cb) {
 		var mi = this.mainImage,
