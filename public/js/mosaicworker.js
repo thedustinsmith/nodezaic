@@ -46,9 +46,6 @@ function _putImageData (inData, xPos, yPos) {
 		rowWidth = self.output.width * 4;
 
 	var inIx = 0;
-	//var debug = '******************** before *********************';
-	//debug += JSON.stringify(self.output);
-	//throw debug;
 	for (var row = yPos; row < (yPos + inH); row++) {
 		var rowStart = row * rowWidth;
 		var colStart = (xPos * 4) + rowStart;
@@ -59,30 +56,13 @@ function _putImageData (inData, xPos, yPos) {
 			inIx++;
 		}
 	}
-	//debug += '********************** after ************************';
-	//debug += JSON.stringify(self.output);
-	//throw debug;
-/*
-	var inIndex = 0;
-	for (var row = yPos; row < yPos + inH; row++) {
-		var start = (xPos * 4) + (row * rowWidth);
-		var end = ((xPos + inW) * 4) + (row * rowWidth) + 4;
-		
-		for (var i = start; i < end; i++) {
-			this.output.data[i] = inData.data[inIndex];
-			inIndex++;
-		}
-	}
-	*/
 }
 
 function bufferOutput (rgb, x, y) {
 	var ss = self.sampleRatio * self.sampleSize;
-	if (true) {//(self.subImages.length) {
+	if (self.subImages.length) {
 		var advData = fillChunk_Advanced(rgb);
-
 		_putImageData(advData, x, y);
-		//this.outCtx.putImageData(advData, x, y);
 	}
 	else {
 		throw 'simp data error';
@@ -102,9 +82,11 @@ function fillChunk_Advanced (rgb) {
 		og = rgb[1],
 		ob = rgb[2],
 		imgIx = getRandomNum(0, self.subImages.length),
-		subImg = self.subImages.slice(0, 1); //[imgIx]; // why didn't this work?
+		subImg = self.subImages[imgIx]; 
 
-	var pix = subImg.data;
+	var pixBuff = new ArrayBuffer(subImg.data.length);
+  	var pix = new Uint8Array(pixBuff);
+  	pix.set(subImg.data, 0, subImg.data.length);
 	for(var j = 0; j<pix.length; j += 4){ 
 		var r = pix[j],
 			g = pix[j+1],
@@ -117,9 +99,14 @@ function fillChunk_Advanced (rgb) {
 		pix[j] = r + (rdelt / 1.5);
 		pix[j + 1] = g + (gdelt / 1.5);
 		pix[j + 2] = b + (bdelt / 1.5);
+
 	}
 
-	return subImg;
+	return {
+		width: subImg.width,
+		height: subImg.height,
+		data: pix
+	}
 };
 
 
@@ -148,5 +135,4 @@ self.addEventListener('message', function(e) {
 	self.postMessage({
 		result: output
 	});
-	//return output.toDataURL();
 });
