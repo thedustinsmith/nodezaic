@@ -2,27 +2,41 @@ extends layout
 block content
 	div.row
 		div.col-lg-12
-			div#nodesaic-wrapper
-				img#main-image(src="/images/nodegloves.jpg", border="0", height="500")
-				div#camera-holder
-				div.action-overlay#ao-initial
-					a.btn.btn-primary.btn-lg#upload-image-wrap(href='#') 
-						i.fa.fa-cloud-upload &nbsp; Upload Image
-						input#upload-image(type="file")
-					a.btn.btn-primary.btn-lg#use-camera(href='#') 
-						i.fa.fa-camera-retro.fa &nbsp; Use Camera
-				div.action-overlay#ao-video
-					a.btn.btn-primary.btn-lg#back-to-initial(href='#') Back
-					a.btn.btn-primary.btn-lg#take-picture(href='#')
-						i.fa.fa-camera-retro.fa &nbsp; Capture
-				div.action-overlay#ao-picture
-					a.btn.btn-primary.btn-lg#picture-again(href='#') Try Again
-					a.btn.btn-primary.btn-lg(href='/Mosaics') View Others
-					a.btn.btn-primary.btn-lg(href='/Mosaics/mine') View Mine
-				div.instagram
-				div.facebook
-				div.loading-wrap
-					img.loading(src="/images/ajax-loader.gif")
+			div.slide-holder
+				div.slider
+					div#nodesaic-wrapper.slide(data-slide='1')
+						p Let's start by selecting the main image you would like to use for this Mozaic.  You can either drag a file onto the page, upload a file, or select a file from one of the social sites.
+						img#main-image(src="/images/nodegloves.jpg", border="0", height="500")
+						button.btn.btn-primary.next Pick Filler
+						div#camera-holder
+						div.action-overlay#ao-initial
+							a.btn.btn-primary.btn-lg#upload-image-wrap(href='#') 
+								i.fa.fa-cloud-upload &nbsp; Upload Image
+								input#upload-image(type="file")
+							a.btn.btn-primary.btn-lg#use-camera(href='#') 
+								i.fa.fa-camera-retro.fa &nbsp; Use Camera
+						div.action-overlay#ao-video
+							a.btn.btn-primary.btn-lg#back-to-initial(href='#') Back
+							a.btn.btn-primary.btn-lg#take-picture(href='#')
+								i.fa.fa-camera-retro.fa &nbsp; Capture
+						div.action-overlay#ao-picture
+							a.btn.btn-primary.btn-lg#picture-again(href='#') Try Again
+							//a.btn.btn-primary.btn-lg(href='/Mosaics') View Others
+							//a.btn.btn-primary.btn-lg(href='/Mosaics/mine') View Mine
+						div.instagram
+						div.facebook
+						div.loading-wrap
+							img.loading(src="/images/ajax-loader.gif")
+					div.slide(data-slide='2')
+						button.btn.btn-primary.prev Back
+						p Now let's add some sub-images (the images that make up the mosaic). Just like before, you can either drag a file onto the page, upload a file, or select a file from one of social sites.
+						img#main-image(src="/images/nodegloves.jpg", border="0", height="500")
+						button.btn.btn-primary.next#generate Generate Mosaic
+						div.instagram
+						div.facebook
+					div.slide(data-slide='3')
+						img#mosaic-image(src="/images/nodegloves.jpg", border="0", height="500")
+						
 	div.row
 		div.col-lg-12
 			div.jumbotron
@@ -74,6 +88,8 @@ block scripts
 	script(src="/js/bootstrap.min.js")
 	script(src="/js/social.js")
 	script(src="/js/browser-detection.js")
+	script(src="/js/jquery.easing.js")
+	script(src="/js/nzSlider.js")
 	script(src="/js/main.js")
 	script
 		app.FacebookID = "#{facebookID}";

@@ -2,12 +2,14 @@ $(function() {
 	var nodesaicWrapper = $("#nodesaic-wrapper"),
 		cameraHolder = $("#camera-holder"),
 		mainImage = $("#main-image"),
+		mosaicImage = $("#mosaic-image"),
 		mosaic = new MosaicJS();
 
 SocialNetworks.init();
 
 var Nodesaic = window.Nodesaic = {
 	camera: null,
+	url: '',
 	subImages: [],
 	validateFile: function(file) {
 		if (file.size > 3000000) { //~3mb
@@ -32,7 +34,7 @@ var Nodesaic = window.Nodesaic = {
 				imgData: mosaicUrl
 			}, function() {
 				nodesaicWrapper.removeClass("loading");
-				mainImage.attr("src", mosaicUrl);
+				mosaicImage.attr("src", mosaicUrl);
 			})
 		}
 		tmp.src = dataUrl;
@@ -49,6 +51,10 @@ var Nodesaic = window.Nodesaic = {
 		if(!filetype) {
 			filetype = 'image/png';
 		}
+		if(!url) {
+			url = Nodesaic.url;
+		}
+
 		Nodesaic.uploadImage(url, filetype);
 		Nodesaic.createMosaic(url);
 	},
@@ -99,10 +105,14 @@ var Nodesaic = window.Nodesaic = {
 			if (!Nodesaic.camera) {
 				return false;
 			}
-			var url = Nodesaic.camera.takePicture();
-			Nodesaic.usePicture(url);
+			Nodesaic.url = Nodesaic.camera.takePicture();
+			$('#main-image').attr('src', Nodesaic.url);
 
 			nodesaicWrapper.removeClass('showing-video').addClass('showing-mosaic');
+		});
+
+		$('#generate').on('click', function() {
+			Nodesaic.usePicture();
 		});
 
 		$("#back-to-initial").on('click', function (e) {
@@ -118,6 +128,10 @@ if(bestBrowsers.indexOf(BrowserDetect.browser) === -1) {
 }
 
 Nodesaic.init();
+
+
+var slider = $('.slide-holder').nzSlider();
+
 });
 
 

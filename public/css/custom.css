@@ -177,3 +177,33 @@ a.listing-change {
 	margin-top: 35px;
 }
 footer{border-top: 1px solid #eeeeee;padding-top:9.5px;display:block;}
+
+
+
+.slide-holder {
+	position: relative;
+	overflow: hidden;
+	height: 626px;
+}
+
+.slider {
+	position: absolute;
+	left: 0;
+}
+
+.slide {
+	float: left;
+	position: relative;
+}
+
+.slide .next {
+	position: absolute;
+	right: 10px;
+	top: 250px;
+}
+
+.slide .prev {
+	position: absolute;
+	left: 10px;
+	top: 250px;
+}
