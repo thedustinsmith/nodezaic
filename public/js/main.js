@@ -5,8 +5,6 @@ $(function() {
 		mosaicImage = $("#mosaic-image"),
 		mosaic = new MosaicJS();
 
-SocialNetworks.init();
-
 var Nodesaic = window.Nodesaic = {
 	camera: null,
 	url: '',
@@ -122,15 +120,18 @@ var Nodesaic = window.Nodesaic = {
 	}
 };
 
-var bestBrowsers = ['Chrome', 'Firefox'];
-if(bestBrowsers.indexOf(BrowserDetect.browser) === -1) {
-	$("#old-browser").modal();
-}
+	var bestBrowsers = ['Chrome', 'Firefox'];
+	if(bestBrowsers.indexOf(BrowserDetect.browser) === -1) {
+		$("#old-browser").modal();
+	}
 
-Nodesaic.init();
+	Nodesaic.init();
 
-
-var slider = $('.slide-holder').nzSlider();
+	var slider = $('.slide-holder').nzSlider();
+	var picker = $('#instagram-modal').imagePicker();
+	$('.instagram').click(function() {
+		picker.trigger('show');
+	});
 
 });
 
