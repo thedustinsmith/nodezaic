@@ -26,14 +26,24 @@ var Nodesaic = window.Nodesaic = {
 		tmp.onload = function() {
 			mosaic.setMainImage(tmp);
 			mosaic.setSubImages(Nodesaic.subImages);
-			var mosaicUrl = mosaic.createMosaic(tmp);
-			nodesaicWrapper.addClass("loading");
+			mosaic.createMosaic(function(mosaicUrl) {
+				mainImage.attr("src", mosaicUrl);
+				log("in create mosaic callback");
+				$.post('/mosaics', {
+					imgData: mosaicUrl
+				}, function() {
+					//nodesaicWrapper.removeClass("loading");
+				})
+			});
+
+/*
+			//nodesaicWrapper.addClass("loading");
 			$.post('/mosaics', {
 				imgData: mosaicUrl
 			}, function() {
-				nodesaicWrapper.removeClass("loading");
-				mainImage.attr("src", mosaicUrl);
+				//nodesaicWrapper.removeClass("loading");
 			})
+*/
 		}
 		tmp.src = dataUrl;
 	},
