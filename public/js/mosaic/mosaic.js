@@ -144,7 +144,7 @@
 		this.output = outputData;
 		this.outCtx = outCtx;
 		
-		var worker = new Worker('/js/mosaicworker.js');
+		var worker = new Worker('/js/mosaic/mosaicworker.js');
 		worker.postMessage({
 			output: outputData,
 			input: inputData,
