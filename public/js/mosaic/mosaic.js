@@ -136,34 +136,86 @@
 		output.height = mi.height * sr;
 		var outCtx = output.getContext('2d');
 
-
-		var outputData = outCtx.createImageData(output.width, output.height);
 		var inputData = mi.getImageData();
 		var subImageData = this.subImages.map(function(si) { return si.getImageData(); });
 		this.subImageData = subImageData;
-		this.output = outputData;
 		this.outCtx = outCtx;
 		
 		var worker = new Worker('/js/mosaic/mosaicworker.js');
-		worker.postMessage({
-			output: outputData,
-			input: inputData,
-			subImageData: subImageData,
-			sampleRatio: sr,
-			sampleSize: q
-		});
-
 		worker.addEventListener('message', function(e) {
-
 			if (e.data.action === 'log') {
 				console.log(e.data);
 				return;
 			}
+			else if (e.data.action === 'jobOutput') {
+				var result = e.data.output,
+					job = e.data.job;
 
-			var result = e.data.result;
-			outCtx.putImageData(result, 0, 0);
-			cb(output.toDataURL());
+				outCtx.putImageData(result, job.x, job.y);
+				if (job.isFinal) {
+					cb(output.toDataURL());
+				}
+			}
 		});
+
+		var outputData = outCtx.createImageData(output.width, output.height);
+		var job = {
+			output: outputData,
+			input: inputData,
+			sampleRatio: sr,
+			sampleSize: q,
+			x: 0,
+			y: 0,
+			width: outputData.width,
+			height: outputData.height,
+			isFinal: true
+		};
+		worker.postMessage({
+			job: job,
+			subImageData: subImageData
+		});
+/*
+		var halfHeight = Math.floor(output.height / 2);
+		var outputData1 = outCtx.createImageData(output.width, halfHeight);
+		var job1 = {
+			output: outputData1,
+			input: inputData,
+			sampleRatio: sr,
+			sampleSize: q,
+			x: 0,
+			y: 0,
+			width: output.width,
+			height: halfHeight
+		};
+		worker.postMessage({
+			job: job1,
+			subImageData: subImageData
+		});
+
+		console.log(halfHeight, output.height);
+		var outputData2 = outCtx.createImageData(output.width, halfHeight);
+		var job2 = {
+			output: outputData1,
+			input: inputData,
+			sampleRatio: sr,
+			sampleSize: q,
+			x: 0,
+			y: halfHeight,
+			width: output.width,
+			height: output.height,
+			isFinal: true
+		};
+		worker.postMessage({
+			job: job2,
+			subImageData: subImageData
+		});
+*/
+		/*for(var x = 0; x < inputData.width; x += 50) {
+			for(var y = 0; y < inputData.height; y += 50) {
+				
+			}
+		}*/
+		
 	};
 
 	MosaicJS.prototype.createMosaic_legacy = function(cb) {

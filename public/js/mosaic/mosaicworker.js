@@ -1,25 +1,6 @@
 importScripts("workerCanvas.js");
 importScripts("../util.js")
 
-function bufferOutput (rgb, x, y) {
-	var ss = self.sampleRatio * self.sampleSize;
-	if (self.subImages.length) {
-		var advData = fillChunk_Advanced(rgb);
-		_putImageData(advData, x, y);
-	}
-	else {
-		throw 'simp data error';
-		var simpData = outCtx.createImageData(ss, ss);
-		for(var i = 0; i < simpData.data.length; i+=4) {
-			simpData.data[i] = r[0];
-			simpData.data[i+1] = r[1];
-			simpData.data[i+2] = r[2];
-			simpData.data[i+3] = 255;
-		}
-		_putImageData(output, simpData, x, y);
-	}
-}
-
 function getSubImageData() {
 	var imgIx = getRandomNum(0, self.subImages.length),
 		subImg = self.subImages[imgIx];
@@ -54,34 +35,48 @@ function adjustSubImageData(rgb, subImgData) {
 	return subImgData;
 }
 
-self.addEventListener('message', function(e) {
-	var input = e.data.input,
-		output = e.data.output,
-		subImageData = e.data.subImageData,
-		w = input.width,
-		h = input.height,
-		sr = e.data.sampleRatio,
-		q = e.data.sampleSize;
-
-	self.output = output
-	self.sampleRatio = sr;
-	self.sampleSize = q;
-	self.subImages = subImageData;
+function processJob(job) {
+	var input = job.input,
+		output = job.output,
+		w = job.width,
+		h = job.height,
+		sampleRatio = job.sampleRatio,
+		ss = job.sampleSize,
+		xStart = job.x,
+		yStart = job.y;
 
 	var wc = new WorkerCanvas(input, output);
 
-	for (var x = 0; x < w; x += q) {
-		for (var y = 0; y < h; y += q) {
-			var chunk = wc.getImageData(x, y, q, q);
+	for (var x = xStart; x < w; x += ss) {
+		for (var y = yStart; y < h; y += ss) {
+			var chunk = wc.getImageData(x, y, ss, ss);
 			var rgb = getAveRGB(chunk.data);
 			//self.postMessage({ action: 'log', more: rgb });
 			var subImageData = getSubImageData();
 			var mod = adjustSubImageData(rgb, subImageData);
-			wc.putImageData(mod, x * sr, y * sr);
+			wc.putImageData(mod, x * sampleRatio, y * sampleRatio);
 		}
 	}
 
 	self.postMessage({
-		result: output
+		action: 'jobOutput',
+		job: job,
+		output: output
 	});
+}
+
+self.addEventListener('message', function(e) {
+	var subImageData = e.data.subImageData;
+
+	self.subImages = subImageData;
+
+	var job = e.data.job;
+	processJob(job);
 });
+
+function debug(m) {
+	self.postMessage({
+		action: 'debug',
+		message: m
+	})
+}
