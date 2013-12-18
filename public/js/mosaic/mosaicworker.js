@@ -1,62 +1,5 @@
-function num(v) {
-		return parseInt(v, 10);
-}
-function arraverage (arr) {
-	var sum = 0;
-	for(var i = 0; i < arr.length; i++) {
-		sum += arr[i]; 
-	}
-	return sum/arr.length;
-}
-function getRandomNum(min, max) {
-	return num(Math.random() * (max - min) + min);
-}
-function getAveRGB (data) {
-	var r = [],
-	  	g = [],
-	  	b = [];
-
-	for(var i = 0; i< data.length; i += 4) {
-		r.push(data[i]);
-		g.push(data[i+1]);
-		b.push(data[i + 2]);
-	}
-
-	return [num(arraverage(r)), num(arraverage(g)), num(arraverage(b))];
-}
-function _getImageData(data, xPos, yPos, w, h) {
-	var ret = [],
-		dWidth = data.width,
-		dHeight = data.height,
-		imgdata = data.data,
-		rowWidth = dWidth * 4;
-
-	for (var row = yPos; row < (yPos + h); row++) {
-		var start = (xPos * 4) + (row * rowWidth);
-		var end = ((xPos + w) * 4) + (row * rowWidth) + 4;
-		for(var i = start; i < end; i++) {
-			ret.push(imgdata[i]);
-		}
-	}
-	return ret;
-}
-function _putImageData (inData, xPos, yPos) {
-	var inW = inData.width,
-		inH = inData.height,
-		rowWidth = self.output.width * 4;
-
-	var inIx = 0;
-	for (var row = yPos; row < (yPos + inH); row++) {
-		var rowStart = row * rowWidth;
-		var colStart = (xPos * 4) + rowStart;
-		var colEnd = colStart + (inW * 4);
-
-		for (var ix = colStart; ix < colEnd; ix++) {
-			self.output.data[ix] = inData.data[inIx];
-			inIx++;
-		}
-	}
-}
+importScripts("workerCanvas.js");
+importScripts("../util.js")
 
 function bufferOutput (rgb, x, y) {
 	var ss = self.sampleRatio * self.sampleSize;
@@ -75,40 +18,41 @@ function bufferOutput (rgb, x, y) {
 		}
 		_putImageData(output, simpData, x, y);
 	}
-};
+}
 
-function fillChunk_Advanced (rgb) {
+function getSubImageData() {
+	var imgIx = getRandomNum(0, self.subImages.length),
+		subImg = self.subImages[imgIx];
+
+	return {
+		data: Uint8Copy(subImg.data),
+		width: subImg.width,
+		height: subImg.height
+	};
+}
+
+function adjustSubImageData(rgb, subImgData) {
 	var or = rgb[0],
 		og = rgb[1],
-		ob = rgb[2],
-		imgIx = getRandomNum(0, self.subImages.length),
-		subImg = self.subImages[imgIx]; 
-
-	var pixBuff = new ArrayBuffer(subImg.data.length);
-  	var pix = new Uint8Array(pixBuff);
-  	pix.set(subImg.data, 0, subImg.data.length);
-	for(var j = 0; j<pix.length; j += 4){ 
-		var r = pix[j],
-			g = pix[j+1],
-			b = pix[j+2];
+		ob = rgb[2];
+		
+	for (var j = 0; j < subImgData.data.length; j += 4){ 
+		var r = subImgData.data[j],
+			g = subImgData.data[j+1],
+			b = subImgData.data[j+2];
 
 		var rdelt = or - r,
 			gdelt = og - g,
 			bdelt = ob - b;
 
-		pix[j] = r + (rdelt / 1.5);
-		pix[j + 1] = g + (gdelt / 1.5);
-		pix[j + 2] = b + (bdelt / 1.5);
+		subImgData.data[j] = r + (rdelt / 1.5);
+		subImgData.data[j + 1] = g + (gdelt / 1.5);
+		subImgData.data[j + 2] = b + (bdelt / 1.5);
 
 	}
 
-	return {
-		width: subImg.width,
-		height: subImg.height,
-		data: pix
-	}
-};
-
+	return subImgData;
+}
 
 self.addEventListener('message', function(e) {
 	var input = e.data.input,
@@ -124,11 +68,16 @@ self.addEventListener('message', function(e) {
 	self.sampleSize = q;
 	self.subImages = subImageData;
 
+	var wc = new WorkerCanvas(input, output);
+
 	for (var x = 0; x < w; x += q) {
 		for (var y = 0; y < h; y += q) {
-			var chunk = _getImageData(input, x, y, q, q);
-			var rgb = getAveRGB(chunk);
-			bufferOutput(rgb, x * sr, y * sr);
+			var chunk = wc.getImageData(x, y, q, q);
+			var rgb = getAveRGB(chunk.data);
+			//self.postMessage({ action: 'log', more: rgb });
+			var subImageData = getSubImageData();
+			var mod = adjustSubImageData(rgb, subImageData);
+			wc.putImageData(mod, x * sr, y * sr);
 		}
 	}
 

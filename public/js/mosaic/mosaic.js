@@ -154,6 +154,12 @@
 		});
 
 		worker.addEventListener('message', function(e) {
+
+			if (e.data.action === 'log') {
+				console.log(e.data);
+				return;
+			}
+
 			var result = e.data.result;
 			outCtx.putImageData(result, 0, 0);
 			cb(output.toDataURL());

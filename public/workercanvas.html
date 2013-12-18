@@ -1,0 +1,115 @@
+<! DOCTYPE html>
+<html>
+<head>
+	<title>Testing</title>
+</head>
+<body>
+	<div style="width: 500px; height: 500px; border: 2px solid #888; float:left;">
+	<canvas id="source" width="300" height="300"></canvas>
+	</div>
+	<div style="width: 500px; height: 500px; border: 2px solid #888; float: left;">
+	<canvas id="destination" width="300" height="300"></canvas>
+	</div>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="js/util.js"></script>
+	<script src="js/mosaic/workerCanvas.js"></script>
+	<script>
+		// Credit to ColorThief for this CanvasImage Class
+		var CanvasImage = window.CanvasImage = function(img, w, h) {
+			this.canvas = document.createElement('canvas');
+			this.context = this.canvas.getContext('2d');
+			this.image = img;
+
+			this.setDimensions(w || img.width, h || img.height);
+		};
+
+		CanvasImage.prototype.draw = function() {
+	    	this.context.drawImage(this.image, 0, 0, this.width, this.height);
+		};
+
+		CanvasImage.prototype.setDimensions = function(w, h) {
+			this.width = this.canvas.width = w;
+			this.height = this.canvas.height = h;
+			this.draw();
+		};
+
+		CanvasImage.prototype.update = function (imageData, x, y) {
+			if (typeof x === 'undefined') {
+				x = 0;
+				y = 0;
+			}
+		    this.context.putImageData(imageData, x, y);
+		};
+
+		CanvasImage.prototype.getImageData = function (x, y, w, h) {
+			if (typeof x === 'undefined') {
+				x = 0;
+				y = 0;
+				w = this.width;
+				h = this.height;
+			}
+		    return this.context.getImageData(x, y, w, h);
+		};
+
+		var source = document.getElementById('source'),
+			srcCtx = source.getContext('2d'),
+			destination = document.getElementById('destination'),
+			destCtx = destination.getContext('2d');
+
+		setTimeout(function() {
+			var img = new Image();
+			img.onload = doWork;
+			img.src = 'images/team/Dustin.jpg';
+		}, 5);
+
+		var q = 10;
+		var sr = 1;
+		var subImgData;
+		var subImg = new Image();
+		subImg.onload = function() {
+			var t = new CanvasImage(subImg,q, q);
+			subImgData = t.getImageData();
+		};
+		subImg.src = 'images/team/Ethan.jpg';
+
+
+
+		function doWork() {
+			srcCtx.drawImage(this, 0, 0, source.width, source.height);
+			var data = srcCtx.getImageData(0, 0, source.width, source.height);
+			var output = destCtx.createImageData(destination.width, destination.height);
+
+			var wc = new WorkerCanvas(data, output);
+			
+			for (var x = 0; x < source.width; x += q) {
+				for (var y = 0; y < source.height; y += q) {
+					var piece = wc.getImageData(x, y, q, q);
+					var rgb = getAveRGB(piece.data);
+					var mod = {
+						data: Uint8Copy(subImgData.data),
+						width: subImgData.width,
+						height: subImgData.height
+					};
+					for(var ix = 0; ix < piece.data.length; ix+=4) {
+						var r2 = mod.data[ix],
+							g2 = mod.data[ix + 1],
+							b2 = mod.data[ix + 2],
+							rdelt = rgb[0] - r2,
+							gdelt = rgb[1] - g2,
+							bdelt = rgb[2] - b2;
+
+						mod.data[ix] = r2 + (rdelt / 1.5); //rgb[0];
+						mod.data[ix + 1] = g2 + (gdelt / 1.5); //rgb[1];
+						mod.data[ix + 2] = b2 + (bdelt /1.5); //rgb[2];
+						mod.data[ix + 3] = 255;
+					}
+					wc.putImageData(mod, x * sr, y * sr);
+				}
+			}
+			console.log(output);
+			destCtx.putImageData(output, 0, 0);
+		}
+	</script>
+</body>
+</html>
