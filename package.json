@@ -16,7 +16,7 @@
     "nko": "*",
     "mongoose": "~3.8.0",
     "tmp": "*",
-    "bcrypt": "*"
+    "bcryptjs": "~0.7.10"
   },
   "devDependencies": {
     "grunt": "~0.4.1",
